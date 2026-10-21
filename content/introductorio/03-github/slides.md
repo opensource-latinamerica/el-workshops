@@ -4,60 +4,160 @@ Curso introductorio · Tema 3
 
 ---
 
-## El problema
+## Del tema 2 a este
 
-Un agente cambia diez archivos en un minuto.
+**La memoria del agente son archivos.**
 
-Si sale mal, ¿cómo regresas?
+¿Y si cambia diez archivos en un minuto y uno quedó mal?
 
----
-
-## Tu botón de deshacer
-
-- **Git:** fotos de tu proyecto
-- **GitHub:** esas fotos guardadas en internet
+- **Git:** guarda la historia de esos archivos
+- **GitHub:** la pone en internet para que otros (personas o agentes) la revisen
 
 ---
 
-## Cuatro palabras
+## Por qué importa más con agentes
 
+- **Velocidad:** cambia mucho y rápido; los errores también
+- **Se equivoca con total seguridad:** necesitas puntos de regreso
+- **Revisas qué cambió**, no todo el proyecto
+
+Más **autonomía** (tema 1) → más necesitas una red.
+
+---
+
+## La historia de un proyecto
+
+```text
+main  ●─────────●─────────●───────────────────────────────────●
+      inicio    página    datos                               unión
+                          │                                   ↑
+                          └──●─────────●─────────✗─────────●──┘
+                             gráfica   estilo    rompió    arreglo
+                                       ↑
+                                       aquí regresas
+```
+
+Cada **●** = un commit: una foto + una nota que el siguiente agente puede leer.
+
+---
+
+## Repo y commit
+
+- **Repo:** la carpeta con memoria
 - **Commit:** una foto con nota
-- **Branch:** copia paralela para probar
-- **Push:** subir a GitHub
-- **Pull request:** proponer y revisar un cambio
+
+**La nota es memoria para el siguiente agente.** Sesión nueva = mesa vacía, pero el historial está escrito:
+
+```text
+Tú: Lee el historial y dime dónde nos quedamos.
+```
+
+--
+
+## Diff: lo que cambió
+
+```diff
+  Total del mes: $4,320
+- Moneda: USD
++ Moneda: MXN
++ Categoría más alta: renta
+```
+
+Verde (`+`): se agregó · Rojo (`-`): se quitó
+
+- Es **la** forma de supervisar al agente, como leer la traza en el tema 1
+- ¿No lo entiendes? "**Explícame este diff**"
+
+--
+
+## Rama, push y pull request
+
+- **Rama:** un experimento seguro; si sale mal, se tira
+- **Push / GitHub:** respaldo en internet + compartir
+- **Pull request:** el espacio para revisar antes de unir a `main`
+
+No memorices comandos: el agente sabe usar `git` y `gh`.
 
 ---
 
-## El flujo
+## GitHub: lugar de trabajo del agente
 
-1. Commit de lo que funciona
-2. El agente trabaja en una rama
-3. **Revisas lo que cambió**
-4. Te gusta → push · No → regresas
+- **Issues:** lista de tareas que el agente lee → "Resuelve el issue #3"
+- **Pull requests:** el agente escribe la descripción; tú (u otro agente con mesa limpia) revisas
+
+--
+
+## Revisiones automáticas
+
+**GitHub Actions:** procesos que corren solos en cada cambio.
+
+**El agente no se califica solo.**
+
+Ejemplo real, este sitio (`.github/workflows/hugo.yaml`). En cada pull request:
+
+1. Prepara una computadora en internet
+2. **Compila** todas las páginas
+3. Si compiló, las **publica** en GitHub Pages
+
+Si algo se rompe, no se publica nada roto.
+
+--
+
+## GitHub Pages
+
+Publica tu proyecto como página web, **gratis**.
+
+Para tu proyecto de la práctica: el agente hace la página, la sube y la compartes con un enlace.
+
+--
+
+## El espectro otra vez
+
+Hay agentes que viven **dentro de GitHub**:
+
+le asignas un issue → te regresa un pull request.
+
+Más autonomía → ramas, PRs y revisiones automáticas se vuelven indispensables.
 
 ---
 
-## No memorices comandos
+## Seguridad
 
-El agente sabe usar `git` y `gh`. Tú pide en el momento correcto:
+- **Nunca subas contraseñas ni API keys.** Una vez en GitHub, considéralas comprometidas (la historia las recuerda)
+- **`.gitignore`:** la lista de lo que Git no guarda
 
-- "Haz commit antes de empezar"
-- "Muéstrame qué cambió"
-- "Regresa al último commit"
-- "Súbelo a mi GitHub"
+```text
+.env
+```
 
----
-
-## Cuándo te sirve
-
-Siempre que el agente vaya a tocar algo que ya funciona.
-
-**Commit seguido, commit barato.**
+- **Repo privado** cuando hay datos personales
 
 ---
 
-## Ejercicio (10 min)
+## Tu sección de Git en AGENTS.md
 
-1. "Convierte esta carpeta en repo y haz el primer commit"
-2. "Crea un repo privado en mi GitHub y súbelo"
-3. Encuéntralo en github.com
+| Frase | ¿Siempre? | Va en |
+|---|---|---|
+| "Haz commit antes de un cambio grande" | Sí | `AGENTS.md` |
+| "Rama nueva, nunca directo en main" | Sí | `AGENTS.md` |
+| "Nunca subas contraseñas ni API keys" | Sí | `AGENTS.md` |
+| "Notas de commit claras" | Sí | `AGENTS.md` |
+| "Muéstrame qué cambió" | No, en el momento | Tu mensaje |
+| "Regresa al último commit" | No, en el momento | Tu mensaje |
+| "Abre un PR con nuestro formato" | A veces | Skill |
+
+--
+
+## Listo para copiar
+
+```markdown
+## Git
+- Antes de un cambio grande, haz commit de lo que funciona.
+- Trabaja en una rama nueva; nunca directo en main.
+- Escribe notas de commit claras: qué cambió y por qué.
+- Nunca subas contraseñas, API keys ni archivos .env.
+```
+
+- Acota la **autonomía** (tema 1)
+- **La memoria son archivos** (tema 2): sobrevive a cada sesión
+- Tema 4, paso 0: "crea un `AGENTS.md`" → este bloque va ahí
