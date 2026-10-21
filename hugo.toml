@@ -1,0 +1,46 @@
+baseURL = "https://opensource-latinamerica.github.io/el-workshops/"
+title = "Workshops de IA aplicada"
+languageCode = "es"
+defaultContentLanguage = "es"
+theme = "hextra"
+enableGitInfo = true
+
+[markup.goldmark.renderer]
+  unsafe = true
+[markup.goldmark.extensions.passthrough]
+  enable = true
+  [markup.goldmark.extensions.passthrough.delimiters]
+    block = [['\[', '\]'], ['$$', '$$']]
+    inline = [['\(', '\)']]
+[markup.highlight]
+  noClasses = false
+
+# Cada sesión publica slides.html (reveal.js) a partir de su slides.md.
+[outputFormats.slides]
+  mediaType = "text/html"
+  baseName = "slides"
+  isHTML = true
+
+[[menu.main]]
+  name = "Introductorio"
+  pageRef = "/introductorio"
+  weight = 1
+[[menu.main]]
+  name = "Avanzado"
+  pageRef = "/avanzado"
+  weight = 2
+[[menu.main]]
+  name = "Buscar"
+  weight = 3
+  [menu.main.params]
+    type = "search"
+[[menu.main]]
+  name = "GitHub"
+  url = "https://github.com/opensource-latinamerica/el-workshops"
+  weight = 4
+  [menu.main.params]
+    icon = "github"
+
+[params.navbar]
+  displayTitle = true
+  displayLogo = false
