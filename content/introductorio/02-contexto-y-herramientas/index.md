@@ -43,11 +43,15 @@ este momento. Un archivo de tu carpeta solo llega a la mesa cuando el agente lo 
 │                                                         │
 │  SI APLICA                                              │
 │    Una skill completa, solo si se usó                   │
+│    (y desde ahí se queda)                               │
 │                                                         │
 │  ESPACIO LIBRE  ← se acaba                              │
 │                                                         │
 └─────────────────────────────────────────────────────────┘
 ```
+
+Las *instrucciones del harness* son lo que el programa le dice al modelo sobre cómo
+comportarse.
 
 Lo de arriba ocupa espacio antes de que escribas tu primer mensaje. Lo de en medio
 crece con cada paso del ciclo.
@@ -74,14 +78,14 @@ o dos tokens. El tamaño de la mesa y lo que gastas de tu plan se miden en token
 Como cada llamada reenvía toda la mesa, **el costo crece con cada paso**:
 
 ```text
-Paso 1:  instrucciones + tu mensaje + archivo enorme
-Paso 2:  instrucciones + tu mensaje + archivo enorme + paso 1
-Paso 3:  instrucciones + tu mensaje + archivo enorme + paso 1 + paso 2
+Paso 1:  instrucciones + tu mensaje        → pide el archivo
+Paso 2:  instrucciones + tu mensaje + respuesta del paso 1
+Paso 3:  instrucciones + tu mensaje + respuesta del paso 1 + paso 2
 …
 ```
 
-Leer un archivo enorme en el paso 1 no se paga una vez. Se vuelve a pagar en todos
-los pasos siguientes.
+La respuesta del paso 1 es el archivo enorme, que llega como resultado. No se paga una
+vez: se vuelve a pagar en todos los pasos siguientes.
 
 **Regla práctica: una tarea, una sesión.** Cuando cambies de tema, empieza una sesión
 nueva. Mesa limpia, menos costo, menos confusión.
@@ -106,14 +110,17 @@ ejecutar(comando)    → el resultado del comando
 buscar_web(consulta) → páginas encontradas
 ```
 
-- **Qué ocupa en la mesa:** la descripción de cada tool, en **cada** llamada.
-- **Error común:** ninguno; ya vienen incluidas. Pero conocerlas te dice qué puedes
-  pedirle.
+- **Qué ocupa en la mesa:** su descripción, **siempre**; y lo que devuelve, cada vez
+  que se usa.
+- **Error común:** pedirle algo para lo que no tiene tool (y que lo invente), o aceptar
+  su uso sin leer el permiso.
 
 ### MCP: un enchufe que trae manos de otro lado
 
 MCP es un protocolo: una forma estándar de conectar el agente a un servidor externo
-que le ofrece tools. Se escribe una vez y sirve en Claude Code, Codex, Gemini CLI y
+que le ofrece tools. Un *protocolo* son reglas comunes para que dos programas se
+entiendan; un *servidor* es un programa (en tu computadora o en internet) que
+atiende pedidos. Se escribe una vez y sirve en Claude Code, Codex, Gemini CLI y
 otros.
 
 Ejemplo: conectas tu calendario por MCP y aparecen dos tools nuevas en la lista:
@@ -125,7 +132,8 @@ listar_eventos(desde, hasta)
 
 Un MCP no es algo distinto a una tool. Es una forma de **traer tools** de afuera.
 
-- **Qué ocupa en la mesa:** todas sus tools van a la lista, **siempre**, las uses o no.
+- **Qué ocupa en la mesa:** todas sus tools van a la lista, en la mayoría de los
+  agentes **siempre**, las uses o no; y lo que devuelven, cada vez que se usan.
 - **Error común:** instalar 10 MCPs "por si acaso". Cada uno llena la mesa en cada
   llamada.
 
@@ -148,7 +156,8 @@ reporte-mensual/
 ¿Qué va en texto y qué va en script?
 
 - Lo **determinista y repetible** (limpiar columnas, sumar, cambiar formatos) → código.
-  Un script hace lo mismo siempre.
+  *Determinista* quiere decir que da siempre el mismo resultado: un script hace lo mismo
+  siempre.
 - Lo que **requiere criterio** (qué destacar, cómo explicar una variación) → texto de
   la skill.
 
@@ -199,7 +208,8 @@ La respuesta es la misma. Lo que cambia es qué quedó en **tu** mesa.
 
 - **La respuesta es corta, pero buscarla es largo.** "¿Dónde…?", "¿qué dice…?",
   "resume estos documentos".
-- **Mucha lectura que no vas a necesitar después.** Logs, 30 PDFs, documentación.
+- **Mucha lectura que no vas a necesitar después.** Logs (registros de lo que pasó),
+  30 PDFs, documentación.
 - **Tareas independientes.** "Investiga estas 3 opciones": un subagente por opción, en
   paralelo.
 - **Una segunda opinión limpia.** "Revisa lo que hicimos". No carga tus supuestos
@@ -223,30 +233,29 @@ delegar:
 
 - **Objetivo:** qué tiene que averiguar o hacer.
 - **Contexto:** lo que no ve. No conoce tu mesa: dile todo lo que necesita saber.
-- **Terminado:** **qué te regrese y en qué forma** ("solo las rutas y una línea por
-  cada una").
+- **Terminado:** para un subagente, "terminado" es **qué te regresa y en qué forma**
+  ("solo las rutas y una línea por cada una").
 
 Esa última parte es la que protege tu mesa. Si no la pides, te puede regresar un
 reporte de dos páginas y volviste a llenarla.
 
 ❌ "Usa un subagente para revisar el IVA."
 
-✅ "Usa un subagente para buscar en `src/` dónde se calcula el IVA. Es el impuesto de
-16 % que se suma en las facturas. Regrésame solo las rutas de los archivos y una línea
-por cada una que diga qué hace."
+✅ "Usa un subagente para buscar en `src/` (la carpeta del proyecto) dónde se calcula el
+IVA. Es el impuesto de 16 % que se suma en las facturas. Regrésame solo las rutas de
+los archivos y una línea por cada una que diga qué hace."
 
 #### Un matiz honesto
 
-El subagente **no ahorra tokens en total**. A veces gasta más: tiene que leer lo mismo,
-y además arma su propia mesa. Lo que ahorra es **tu** mesa. Pagas un poco más para que
-la conversación principal siga clara.
+No siempre ahorra tokens: la búsqueda se paga igual y armar su mesa cuesta. Lo que
+seguro ahorra es **tu** mesa. A veces pagas un poco más para que la conversación
+principal siga clara.
 
 - **Qué ocupa en la mesa:** tu encargo y su respuesta final.
 - **Error común:** delegar sin decir qué contexto necesita ni qué te debe regresar.
 
 > **Para quien presenta:** antes de mostrar las señales, pregunta "¿cuándo NO
-> conviene delegar?". Luego pide a alguien que reescriba en voz alta el encargo ❌
-> con las tres partes.
+> conviene delegar?".
 
 En el tema 4 verás que superpowers usa subagentes para repartir el trabajo.
 
@@ -260,8 +269,15 @@ en cada llamada.
 - Nunca borres la carpeta `datos/`.
 ```
 
-`AGENTS.md` es el nombre común. Algunos agentes usan otro: Claude Code lee
-`CLAUDE.md` y Gemini CLI lee `GEMINI.md`. La idea es la misma.
+`AGENTS.md` es el nombre común, pero no todos los agentes lo leen. Crea el archivo
+según tu agente:
+
+- **Codex:** `AGENTS.md`.
+- **Claude Code:** `CLAUDE.md`. Truco: si ya tienes un `AGENTS.md`, tu `CLAUDE.md`
+  puede tener solo la línea `@AGENTS.md`, y Claude Code lo importa.
+- **Gemini CLI:** `GEMINI.md`.
+
+La idea es la misma. En el curso le decimos `AGENTS.md` a cualquiera de ellos.
 
 - **Qué ocupa en la mesa:** todo su contenido, en **cada** llamada.
 - **Error común:** hacerlo largo. Cada línea se paga siempre.
@@ -270,35 +286,38 @@ en cada llamada.
 
 | Pieza | En la metáfora | Agrega | Qué ocupa en la mesa | Error común |
 |---|---|---|---|---|
-| Tool | Una mano | Una acción | Su descripción, siempre | Ninguno: ya vienen |
-| MCP | Un enchufe que trae manos | Tools de un servicio externo | Todas sus tools, siempre | Instalar muchos "por si acaso" |
-| Skill | Una receta en el cajón | Saber hacer | Nombre y descripción; el resto si aplica | Meter el procedimiento en `AGENTS.md` |
+| Tool | Una mano | Una acción | Su descripción, siempre; y lo que devuelve, cada vez que se usa | Pedirle algo sin tool (y que lo invente) o aceptar sin leer el permiso |
+| MCP | Un enchufe que trae manos | Tools de un servicio externo | Todas sus tools, siempre; y lo que devuelven, cada vez que se usan | Instalar muchos "por si acaso" |
+| Skill | Una receta en el cajón | Saber hacer | Nombre y descripción; el resto si aplica (y se queda) | Meter el procedimiento en `AGENTS.md` |
 | Subagente | Otra persona con su mesa | Una mesa aparte | Tu encargo y su resultado | Delegar sin dar contexto ni decir qué regresar |
 | `AGENTS.md` | La nota pegada en la mesa | Reglas que aplican siempre | Todo, siempre | Hacerlo largo |
 
 > **Para quien presenta:** para cada pieza, pregunta "¿qué ocupa en la mesa?" antes
 > de mostrar la respuesta. Es la pregunta que conecta las cinco.
 
-## Cómo elegir
+## ¿Dónde va cada cosa?
 
-Cuando el agente no hace lo que quieres, pregúntate qué le falta:
+Cuando el agente no hace lo que quieres, pregúntate qué le falta y dónde ponerlo:
 
 ```text
 ¿Le falta una acción?             → Tool
-                                    (si viene de un servicio externo: vía MCP)
+                                    (de un servicio externo: vía MCP)
 ¿Le falta saber cómo hacerlo?     → Skill
-                                    (los pasos fijos, en un script adentro)
-¿La tarea llenaría la mesa?       → Subagente
-                                    (si solo te importa la conclusión)
+                                    (los pasos fijos, en un script)
+¿Llenaría tu mesa y solo te       → Subagente
+ importa la conclusión?
 ¿Es una regla que aplica siempre? → AGENTS.md
+¿Es solo para esta vez?           → Dilo en tu mensaje
 ```
 
 ## La memoria del agente son archivos
 
 El modelo no recuerda nada entre sesiones. Cada sesión empieza con la mesa vacía.
 
-Lo que sobrevive es lo que quedó **escrito**: `AGENTS.md`, las skills, las specs. Si
-quieres que el agente sepa algo la próxima vez, tiene que estar en un archivo.
+Lo que sobrevive es lo que quedó **escrito**: `AGENTS.md`, las skills, las specs
+(documentos que dicen qué se va a construir; las verás en el tema 4) y el historial de
+commits (tema 3). Si quieres que el agente sepa algo la próxima vez, tiene que estar en
+un archivo.
 
 En el tema 4 lo vas a usar: la spec y el plan de un proyecto viven en archivos, y por
 eso el trabajo puede seguir de una sesión a otra.

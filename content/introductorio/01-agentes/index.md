@@ -22,8 +22,8 @@ La respuesta: **quién cierra el ciclo**.
 | | Chat web | Agente en la terminal |
 |---|---|---|
 | Ve tus archivos | Solo lo que pegas | La carpeta donde lo abres |
-| Ejecuta cosas | No | Sí, con tu permiso |
-| Revisa su trabajo | No | Sí: corre, lee el error, corrige |
+| Ejecuta cosas | Solo en su propio espacio, no en tu computadora | Sí, con tu permiso |
+| Revisa su trabajo | Solo lo que corre en su espacio | Sí: corre, lee el resultado, corrige |
 | Tu papel | Copiar y pegar | Pedir y revisar |
 
 ## Agente = modelo + herramientas + ciclo
@@ -32,9 +32,11 @@ Un agente no es un modelo distinto. Es el mismo modelo con dos cosas más alrede
 
 ### El modelo solo escribe texto
 
-Un modelo de lenguaje hace una sola cosa: predice la siguiente palabra, una tras otra.
+Un modelo de lenguaje hace una sola cosa: predice la siguiente palabra, una tras otra
+(en realidad, pedazos de palabra: tema 2).
 No tiene manos: no puede abrir un archivo ni correr nada. Tampoco tiene memoria
-propia: solo sabe lo que viene escrito en la conversación que recibe.
+propia: no recuerda nada que no venga en la conversación que recibe (sabe lo que
+aprendió al entrenarse, pero no lo que pasó antes).
 
 ### Herramientas: una lista de lo que puede pedir
 
@@ -77,24 +79,28 @@ importa.
 
 ## Ejemplo: ¿cuánto gasté en octubre?
 
-Tienes un archivo `gastos.csv` y abres el agente en esa carpeta.
+Tienes un archivo `gastos.csv` (una tabla tipo Excel guardada como texto) y abres el
+agente en esa carpeta.
 
 ```text
 Herramientas: leer_archivo(ruta), ejecutar(comando)
 
-Tú:      ¿Cuánto gasté en octubre?
-Modelo:  → leer_archivo("gastos.csv")
-Sistema: ← fecha,concepto,monto
-           28/09/2026,renta,6000
-           03/10/2026,super,850
-           …
-Modelo:  → ejecutar("sumar monto donde fecha tenga '2026-10'")
-Sistema: ← Error: ninguna fila coincide con '2026-10'
-Modelo:  Las fechas vienen como día/mes/año. Corrijo.
-Modelo:  → ejecutar("sumar monto donde fecha tenga '/10/2026'")
-Sistema: ← 4320
-Modelo:  Gastaste $4,320 en octubre.
+Tú:        ¿Cuánto gasté en octubre?
+Modelo:    → leer_archivo("gastos.csv")
+Programa:  ← fecha,concepto,monto
+             28/09/2026,renta,6000
+             03/10/2026,super,850
+             …
+Modelo:    → ejecutar("sumar monto donde fecha tenga '2026-10'")
+Programa:  ← 0
+Modelo:    ¿0 en octubre? No puede ser. Las fechas vienen como
+           día/mes/año. Corrijo.
+           → ejecutar("sumar monto donde fecha tenga '/10/2026'")
+Programa:  ← 4320
+Modelo:    Gastaste $4,320 en octubre.
 ```
+
+Esto es una **traza**: lo que el modelo pide (→) y lo que el programa le devuelve (←).
 
 (En la vida real el comando estaría escrito en un lenguaje como Python. Aquí lo
 escribimos en español para que se lea fácil.)
@@ -102,25 +108,28 @@ escribimos en español para que se lea fácil.)
 Lo que pasó:
 
 - El modelo se llamó **cuatro veces**, y cada vez recibió toda la conversación.
-- El primer intento falló: buscó fechas como `2026-10`, pero el archivo usa
-  `03/10/2026`.
-- Leyó el error, entendió el formato y corrigió. **Sin ti.**
+- El primer intento devolvió `0`: buscó fechas como `2026-10`, pero el archivo usa
+  `03/10/2026`. No hubo error; el resultado simplemente no tenía sentido.
+- Notó que `0` no podía ser, entendió el formato y corrigió. **Sin ti.**
 
-En el chat web, ese error te lo habría devuelto a ti para que lo probaras y se lo
-contaras. Aquí el ciclo lo resolvió solo.
+En el chat web, ese `0` lo habrías visto tú, y te habría tocado darte cuenta y
+contárselo. Aquí el ciclo lo resolvió solo.
 
 > **Para quien presenta:** lee la traza en voz alta, línea por línea. En cada `→`,
 > di "aquí el modelo **pide**"; en cada `←`, di "aquí el programa le **devuelve** el
-> resultado real". Detente en el error: es el momento en que el ciclo se gana su lugar.
+> resultado real". Detente en el `← 0`: no es un error, es un resultado que no tiene
+> sentido. El modelo lo ve y lo cuestiona; ahí el ciclo se gana su lugar.
 
 ## ¿De dónde viene la agencia?
 
-Tres cosas hacen que un modelo se comporte como agente:
+Dos cosas alrededor del modelo hacen que se comporte como agente:
 
 - **Herramientas:** puede actuar, no solo hablar.
 - **Ciclo:** ve el resultado real de lo que hizo.
-- **Autonomía:** tú das el objetivo; él decide los pasos, dentro de los permisos que
-  le das.
+
+Juntas hacen posible la **autonomía**: tú das el objetivo; él decide los pasos, dentro
+de los permisos que le das. La autonomía no es una cuarta pieza: la fórmula sigue
+siendo modelo + herramientas + ciclo. Es lo que ese ciclo con herramientas permite.
 
 ## Un espectro, no un interruptor
 
@@ -130,10 +139,10 @@ herramientas: buscar en internet o correr código en su propio espacio aislado.
 Más herramientas, más acceso a tu entorno real y más pasos seguidos sin ti = **más
 agente**.
 
-El agente en la terminal está en el extremo porque trabaja sobre **tus archivos**. La
-terminal es donde viven tus archivos y tus programas: la carpeta donde lo abres se
-vuelve su lugar de trabajo, y todo lo que hace queda en tu computadora para que lo
-revises.
+El agente en la terminal está en el extremo porque trabaja sobre **tus archivos**.
+Desde la terminal el agente llega a tus archivos y tus programas: la carpeta donde lo
+abres se vuelve su lugar de trabajo, y todo lo que hace queda en tu computadora para
+que lo revises.
 
 ## Permisos
 
@@ -148,14 +157,17 @@ Esto es lo que vas a practicar. Un buen pedido tiene tres partes:
 
 - **Objetivo:** qué quieres lograr ("una página que muestre mis gastos del mes").
 - **Contexto:** lo que el agente no puede adivinar ("los gastos están en `gastos.csv`").
-- **Terminado:** cómo sabrás que quedó ("se abre en el navegador y muestra el total").
+- **Terminado:** cómo sabrás que quedó ("el total que muestra coincide con la suma de
+  `gastos.csv`").
 
 El criterio de "terminado" es lo que el agente usa para saber cuándo salir del ciclo.
+Por eso tiene que ser algo que él pueda comprobar. Abrirla en el navegador y mirarla es
+tu revisión, después.
 
 ❌ "Hazme una página"
 
-✅ "Haz una página que muestre mis gastos de `gastos.csv`. Está lista cuando abre en
-el navegador y muestra el total del mes."
+✅ "Haz una página que muestre mis gastos de `gastos.csv`. Está lista cuando el total
+del mes que muestra coincide con la suma de `gastos.csv`."
 
 ## Cuándo te sirve
 

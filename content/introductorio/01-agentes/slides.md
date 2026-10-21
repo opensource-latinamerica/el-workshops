@@ -26,8 +26,8 @@ En la terminal: lo escribe, lo prueba y lo arregla.
 | | Chat web | Agente en la terminal |
 |---|---|---|
 | Ve tus archivos | Solo lo que pegas | La carpeta donde lo abres |
-| Ejecuta cosas | No | Sí, con tu permiso |
-| Revisa su trabajo | No | Sí |
+| Ejecuta cosas | Solo en su propio espacio, no en tu computadora | Sí, con tu permiso |
+| Revisa su trabajo | Solo lo que corre en su espacio | Sí |
 | Tu papel | Copiar y pegar | Pedir y revisar |
 
 ---
@@ -40,7 +40,7 @@ En la terminal: lo escribe, lo prueba y lo arregla.
 
 - Predice la siguiente palabra
 - No tiene manos
-- No tiene memoria propia
+- No recuerda nada que no venga en la conversación
 
 ---
 
@@ -83,25 +83,28 @@ Un programa alrededor del modelo (el *harness*) la **ejecuta de verdad** y le de
 ```text
 Herramientas: leer_archivo(ruta), ejecutar(comando)
 
-Tú:      ¿Cuánto gasté en octubre?
-Modelo:  → leer_archivo("gastos.csv")
-Sistema: ← fecha,concepto,monto
-           28/09/2026,renta,6000
-           03/10/2026,super,850
-           …
-Modelo:  → ejecutar("sumar monto donde fecha tenga '2026-10'")
-Sistema: ← Error: ninguna fila coincide con '2026-10'
+Tú:        ¿Cuánto gasté en octubre?
+Modelo:    → leer_archivo("gastos.csv")
+Programa:  ← fecha,concepto,monto
+             28/09/2026,renta,6000
+             03/10/2026,super,850
+             …
+Modelo:    → ejecutar("sumar monto donde fecha tenga '2026-10'")
+Programa:  ← 0
 ```
+
+Esto es una **traza**: lo que el modelo pide (→) y lo que el programa le devuelve (←).
 
 ---
 
 ## Ejemplo: tus gastos (2/2)
 
 ```text
-Modelo:  Las fechas vienen como día/mes/año. Corrijo.
-Modelo:  → ejecutar("sumar monto donde fecha tenga '/10/2026'")
-Sistema: ← 4320
-Modelo:  Gastaste $4,320 en octubre.
+Modelo:    ¿0 en octubre? No puede ser. Las fechas vienen como
+           día/mes/año. Corrijo.
+           → ejecutar("sumar monto donde fecha tenga '/10/2026'")
+Programa:  ← 4320
+Modelo:    Gastaste $4,320 en octubre.
 ```
 
 ---
@@ -110,7 +113,7 @@ Modelo:  Gastaste $4,320 en octubre.
 
 - El modelo se llamó **cuatro veces**
 - Cada vez recibió **toda la conversación**
-- Leyó el error y corrigió **sin ti**
+- Vio que `0` no tenía sentido y corrigió **sin ti**
 
 ---
 
@@ -118,7 +121,10 @@ Modelo:  Gastaste $4,320 en octubre.
 
 - **Herramientas:** puede actuar
 - **Ciclo:** ve el resultado real
-- **Autonomía:** tú das el objetivo, él decide los pasos (dentro de tus permisos)
+
+Juntas hacen posible la **autonomía**: tú das el objetivo, él decide los pasos (dentro de tus permisos).
+
+No es una cuarta pieza: sigue siendo modelo + herramientas + ciclo.
 
 ---
 
@@ -142,7 +148,7 @@ Existen porque las herramientas **actúan de verdad**.
 
 1. **Objetivo:** qué quieres lograr
 2. **Contexto:** lo que no puede adivinar
-3. **Terminado:** cómo sabrás que quedó
+3. **Terminado:** cómo sabrás que quedó (algo que el agente pueda comprobar)
 
 ---
 
@@ -150,7 +156,9 @@ Existen porque las herramientas **actúan de verdad**.
 
 ❌ "Hazme una página"
 
-✅ "Haz una página que muestre mis gastos de `gastos.csv`. Está lista cuando abre en el navegador y muestra el total del mes."
+✅ "Haz una página que muestre mis gastos de `gastos.csv`. Está lista cuando el total del mes que muestra coincide con la suma de `gastos.csv`."
+
+Abrirla en el navegador es **tu** revisión.
 
 ---
 

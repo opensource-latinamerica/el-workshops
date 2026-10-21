@@ -11,7 +11,7 @@ outputs: [html, slides]
 En el tema 2 vimos que **la memoria del agente son archivos**. Lo que no quedó
 escrito, se pierde al cerrar la sesión.
 
-Ahora la pregunta inversa: ¿qué pasa cuando el agente cambia diez archivos en un
+Ahora la otra cara: ¿qué pasa cuando el agente cambia diez archivos en un
 minuto y uno quedó mal? ¿Cómo sabes cuál fue? ¿Cómo vuelves a como estaba?
 
 - **Git** guarda la historia de esos archivos: cada versión, con una nota.
@@ -27,7 +27,7 @@ minuto y uno quedó mal? ¿Cómo sabes cuál fue? ¿Cómo vuelves a como estaba?
 - **Revisas qué cambió, no todo el proyecto.** Leer cinco líneas nuevas es posible.
   Releer todo el proyecto después de cada pedido, no.
 
-En el tema 1 vimos que la **autonomía** es lo que hace a un agente: tú das el
+En el tema 1 vimos que la **autonomía** es parte de lo que hace a un agente: tú das el
 objetivo y él decide los pasos. Entre más autonomía le das, más necesitas una red.
 Git es esa red.
 
@@ -36,18 +36,19 @@ Git es esa red.
 Así se ve la historia de un proyecto pequeño, una página de gastos:
 
 ```text
-main  ●─────────●─────────●───────────────────────────────────●
-      inicio    página    datos                               unión
-                          │                                   ↑
-                          └──●─────────●─────────✗─────────●──┘
-                             gráfica   estilo    rompió    arreglo
-                                       ↑
-                                       aquí regresas
+main  ●─────────●─────────●───────────────────────────●
+      inicio    página    datos                       unión
+                          │                           ↑
+                          └──●─────────●─────────●────┘
+                             gráfica   estilo    arreglo
+                                       ╲
+                                        ✗ rompió (sin commit: se tira)
 ```
 
 Cada **●** es un commit: una foto del proyecto más una nota que el siguiente agente
-puede leer. El **✗** es un cambio que rompió algo. Como existe la foto anterior,
-regresas a "estilo", el agente lo arregla, y la rama se une de vuelta a `main`.
+puede leer. El **✗** son cambios sin guardar que rompieron algo. Los tiras, regresas al
+último commit (*estilo*) y desde ahí el agente hace *arreglo*. Al final, la rama se une
+de vuelta a `main`.
 
 Con este dibujo se explican todas las palabras que siguen.
 
@@ -87,10 +88,11 @@ Un **diff** muestra la diferencia entre dos fotos. Lo que se agregó aparece en
   Total del mes: $4,320
 - Moneda: USD
 + Moneda: MXN
-+ Categoría más alta: renta
++ Categoría más alta: super
 ```
 
-Se cambió la moneda y se agregó una línea. Lo demás quedó igual.
+Se cambió la moneda y se agregó una línea. Lo demás quedó igual. Cambiar una línea =
+quitar la vieja (`-`) y agregar la nueva (`+`).
 
 El diff es **la** forma de supervisar al agente. En el tema 1 leíamos la traza para
 ver qué pidió y qué le devolvieron. El diff es lo mismo para los archivos: qué dejó
@@ -123,7 +125,7 @@ la versión buena.
 No necesitas memorizar comandos: el agente sabe usar `git` y `gh` (la herramienta de
 GitHub para la terminal). Tú le pides el qué; él escribe el cómo.
 
-## GitHub como lugar de trabajo del agente
+## GitHub: donde el agente recibe tareas y lo revisan
 
 GitHub no solo guarda archivos. Es un lugar donde el agente puede leer tareas,
 proponer cambios y ser revisado.
@@ -151,29 +153,40 @@ alguien revisa:
 
 ### Revisiones automáticas: GitHub Actions
 
-**GitHub Actions** son procesos que corren solos en cada cambio: pruebas, revisiones,
+**GitHub Actions** son procesos que corren solos cuando algo cambia: pruebas, revisiones,
 publicar algo. Nadie tiene que acordarse de correrlos.
 
-La idea clave: **el agente no se califica solo.** Si dice "ya funciona", una prueba
-automática lo comprueba de verdad.
+La idea clave: **el agente no se califica solo.** Si dice "ya funciona", una revisión
+automática lo comprueba; en este sitio, al menos que compile: si no compila, no se
+publica.
 
 **Ejemplo real: este mismo sitio.** El curso que estás leyendo vive en un repo de
 GitHub. Tiene un archivo de instrucciones para GitHub Actions
 (`.github/workflows/hugo.yaml`) que dice:
 
-1. Cada vez que alguien abre o actualiza un pull request (o se une algo a `main`),
+1. En cada pull request (cuando se abre o se actualiza) y en cada cambio en `main`,
    prepara una computadora en internet.
-2. Instala el programa que arma el sitio y **compila** todas las páginas.
+2. Instala el programa que arma el sitio y **compila** (arma todas las páginas).
 3. Si compila bien, las **publica** en GitHub Pages.
+
+En este curso cada PR se publica para poder verlo en línea; en muchos proyectos solo
+se publica lo que entra a `main`.
 
 Si un cambio rompe el sitio, el paso 2 falla y no se publica nada roto. Nadie tuvo que
 revisarlo a mano.
 
 ### GitHub Pages: tu proyecto como página web
 
-**GitHub Pages** publica los archivos de un repo como una página web, gratis. Para su
-proyecto de la práctica sirve directo: el agente hace la página, la sube a GitHub y
-cualquiera la puede abrir con un enlace.
+**GitHub Pages** publica los archivos de un repo como una página web, gratis. Si tu
+proyecto de la práctica es una página web, sirve directo: el agente hace la página, la
+sube a GitHub y cualquiera la puede abrir con un enlace. Pídelo así:
+
+```text
+Tú: Publícalo en GitHub Pages y dame el enlace.
+```
+
+La página que publiques la puede ver cualquiera. Si tu proyecto tiene datos
+personales, usa datos de ejemplo.
 
 ### El espectro otra vez
 
@@ -182,12 +195,13 @@ GitHub**: le asignas un issue y, sin que abras la terminal, te regresa un pull r
 listo para revisar. Por ejemplo, Copilot, Claude o Codex tienen versiones que trabajan
 así.
 
-Ahí el agente tiene más autonomía todavía. Por eso todo lo anterior (ramas, PRs,
+Ahí los agentes dan todavía más pasos sin ti. Por eso todo lo anterior (ramas, PRs,
 revisiones automáticas) se vuelve indispensable: es la forma de revisarlo.
 
 ## Seguridad
 
-- **Nunca subas contraseñas ni API keys.** El agente puede hacerlo por accidente si
+- **Nunca subas contraseñas ni API keys** (llaves de acceso a servicios, a veces de
+  pago). El agente puede hacerlo por accidente si
   están en un archivo de la carpeta. Una vez en GitHub, considéralas comprometidas:
   cámbialas, aunque las borres después. La historia las recuerda.
 - **`.gitignore`** es la lista de lo que Git no guarda. Por ejemplo, el archivo `.env`,
@@ -197,27 +211,33 @@ revisiones automáticas) se vuelve indispensable: es la forma de revisarlo.
   .env
   ```
 
+  Tiene que existir antes del primer commit: `.gitignore` no borra lo que ya se subió.
+
 - **Repos privados** cuando el proyecto tenga datos personales o algo que no quieras
-  mostrar. Público, cualquiera lo ve.
+  mostrar. Público, cualquiera lo ve. Ojo: en una cuenta gratis, un repo privado no se
+  puede publicar con GitHub Pages.
 
 > **Para quien presenta:** pregunta "¿qué pasa si borro la contraseña en el siguiente
 > commit?". La respuesta (sigue en la historia) es lo que hace que la regla se quede.
 
 ## Tu sección de Git en AGENTS.md
 
-En el tema 2 vimos **cómo elegir** dónde va cada cosa. Apliquémoslo a frases de Git:
+En el tema 2 vimos **dónde va cada cosa**. Apliquémoslo a frases de Git:
 
-| Frase | ¿Aplica siempre? | Va en |
+| Frase | ¿Qué es? | Va en |
 |---|---|---|
-| "Haz commit antes de un cambio grande" | Sí | `AGENTS.md` |
-| "Trabaja en una rama nueva, nunca directo en main" | Sí | `AGENTS.md` |
-| "Nunca subas contraseñas ni API keys" | Sí | `AGENTS.md` |
-| "Escribe notas de commit claras: son la memoria del siguiente agente" | Sí | `AGENTS.md` |
-| "Muéstrame qué cambió" | No, la pides en el momento | Tu mensaje |
-| "Regresa al último commit" | No, en el momento | Tu mensaje |
-| "Abre un PR con nuestro formato: por qué y qué cambió" | No, procedimiento que aplica a veces | Skill |
+| "Haz commit antes de un cambio grande" | Regla de siempre | `AGENTS.md` |
+| "Trabaja en una rama nueva, nunca directo en main" | Regla de siempre | `AGENTS.md` |
+| "Nunca subas contraseñas ni API keys" | Regla de siempre | `AGENTS.md` |
+| "Escribe notas de commit claras: son la memoria del siguiente agente" | Regla de siempre | `AGENTS.md` |
+| "Muéstrame qué cambió" | Pedido de ahora | Tu mensaje |
+| "Regresa al último commit" | Pedido de ahora | Tu mensaje |
+| "Abre un PR con nuestro formato: por qué y qué cambió" | Procedimiento con pasos | Skill |
 
-El bloque listo para copiar:
+Lo de una sola vez va en tu mensaje, igual que el pedido del tema 1.
+
+El bloque listo para copiar (en `AGENTS.md`, o `CLAUDE.md`/`GEMINI.md` según tu
+agente; ver tema 2):
 
 ```markdown
 ## Git
@@ -225,6 +245,8 @@ El bloque listo para copiar:
 - Trabaja en una rama nueva; nunca directo en main.
 - Escribe notas de commit claras: qué cambió y por qué.
 - Nunca subas contraseñas, API keys ni archivos .env.
+- Agrega .env a .gitignore antes del primer commit.
+- Cuando algo funcione, abre un PR y únelo a main cuando yo lo apruebe.
 ```
 
 Por qué funciona:

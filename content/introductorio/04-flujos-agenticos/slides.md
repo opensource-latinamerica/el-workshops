@@ -59,20 +59,20 @@ Primero **qué** y **por qué**. Después el **cómo**.
 ## Por qué funciona
 
 - Pregunta en lugar de adivinar
-- Los errores se corrigen en el spec, donde son baratos
+- Los errores se corrigen en la spec, donde son baratos
 - Cada paso deja algo revisable
 
 ---
 
 ## Mapa del flujo
 
-0. Preparar: carpeta, repo, `AGENTS.md`
+0. Preparar: carpeta, repo, `AGENTS.md` (o `CLAUDE.md`/`GEMINI.md`; ver tema 2)
 1. Idea: describe tu **problema**, no la solución
-2. Spec: léelo completo y corrige
+2. Spec: léela completa y corrige
 3. Plan: pasos pequeños
 4. Ejecución: lee los permisos
 5. Revisión: pruébalo tú
-6. Guardar: commit y push
+6. Guardar: revisa, abre un PR y únelo; si es una página, publícala en GitHub Pages
 
 ---
 
