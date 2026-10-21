@@ -4,82 +4,200 @@ Curso introductorio · Tema 2
 
 ---
 
-## El agente olvida
+## Lo que el modelo lee
 
-- Su memoria es el **contexto** de la conversación
-- **Se llena:** se confunde o resume y pierde detalles
-- **Se borra:** cada sesión nueva empieza de cero
+En el tema 1: **toda la conversación se reenvía cada vez**.
 
----
-
-## Uso (tokens)
-
-Cada mensaje y cada archivo leído gasta de tu plan.
-
-**Regla:** una tarea, una sesión.
+**¿Qué hay exactamente en lo que lee?**
 
 ---
 
-## Cuatro piezas
+## La ventana de contexto es una mesa
 
-1. `AGENTS.md`
-2. Skills
-3. Tools
-4. MCP
+- Todo lo que el modelo ve en una llamada, **y nada más**
+- Espacio limitado
+- La carpeta es lo que **puede alcanzar**; la mesa, lo que **tiene enfrente**
 
 ---
 
-## `AGENTS.md`
+## Qué hay en la mesa
 
-Reglas permanentes del proyecto. Se lee **al empezar cada sesión**.
+```text
+SIEMPRE
+  Instrucciones del harness
+  AGENTS.md
+  Lista de herramientas (+ las de cada MCP)
+  Nombre y descripción de cada skill
 
-```markdown
-- Responde siempre en español.
-- Explícame los cambios antes de hacerlos.
-- Nunca borres la carpeta datos/.
+CRECE
+  La conversación: tus mensajes y sus respuestas
+  Resultados de herramientas: archivos leídos, …
+
+SI APLICA
+  Una skill completa, solo si se usó
+
+ESPACIO LIBRE  ← se acaba
 ```
 
-Usa uno cuando te descubras **repitiendo lo mismo**.
+---
+
+## Tres consecuencias
+
+- **Se llena:** el harness *compacta* (resume) y pierde detalles
+- **Se degrada antes de llenarse:** con mucho encima, lo importante se pierde
+- **Se borra:** sesión nueva = mesa vacía, salvo lo de "siempre"
 
 ---
 
-## Skills
+## Tokens
 
-Recetas guardadas que el agente carga **solo cuando aplican**.
+Token = un pedazo de palabra. La mesa y tu plan se miden en tokens.
 
-Úsalas para tareas que **siempre se hacen igual**.
+```text
+Paso 1:  instrucciones + mensaje + archivo enorme
+Paso 2:  instrucciones + mensaje + archivo enorme + paso 1
+Paso 3:  instrucciones + mensaje + archivo enorme + paso 1 + paso 2
+```
 
----
-
-## Tools
-
-Las manos del agente: leer, escribir, ejecutar, buscar.
-
-Conocerlas te dice **qué puedes pedirle**.
+El archivo enorme se **vuelve a pagar** en cada paso.
 
 ---
 
-## MCP
+## Regla
 
-Un enchufe estándar para conectar servicios de afuera: calendario, Notion, bases de datos.
+**Una tarea, una sesión.**
 
-Úsalo cuando el agente necesita algo **fuera de tu computadora**.
-
----
-
-## ¿Cuál uso?
-
-| Si… | Usa |
-|---|---|
-| repites la misma instrucción | `AGENTS.md` |
-| repites el mismo procedimiento | Skill |
-| quieres saber qué puede hacer | Tools |
-| necesita un servicio externo | MCP |
+Mesa limpia, menos costo, menos confusión.
 
 ---
 
-## Ejercicio (10 min)
+## Cinco piezas
 
-1. Pide un `AGENTS.md` con 2–3 reglas tuyas
-2. Cierra y abre el agente
-3. "¿Qué reglas tienes en este proyecto?"
+1. Tool
+2. MCP
+3. Skill
+4. Subagente
+5. `AGENTS.md`
+
+Para cada una: **¿qué ocupa en la mesa?**
+
+---
+
+## Tool = una mano
+
+Agrega una **acción**. Nombre, entradas, resultado. Para el agente: caja negra.
+
+```text
+leer_archivo(ruta)
+ejecutar(comando)
+buscar_web(consulta)
+```
+
+- **En la mesa:** su descripción, en cada llamada
+- **Error común:** ninguno; ya vienen. Conocerlas te dice qué pedir
+
+---
+
+## MCP = un enchufe que trae manos
+
+Protocolo para conectar un servidor externo que ofrece **tools**. Sirve en Claude Code, Codex, Gemini…
+
+```text
+Calendario por MCP → crear_evento, listar_eventos
+```
+
+- **En la mesa:** todas sus tools, **siempre**
+- **Error común:** instalar 10 "por si acaso"
+
+---
+
+## Skill = una receta del cajón
+
+Agrega **saber hacer**: un `SKILL.md` con pasos, formato y criterio. Puede traer scripts.
+
+```text
+reporte-mensual/
+  SKILL.md          ← pasos y formato
+  limpiar_datos.py  ← los pasos fijos
+```
+
+- **No agrega acciones:** usa las que ya hay
+- **En la mesa:** solo nombre y descripción
+- **Error común:** meter el procedimiento en `AGENTS.md`
+
+--
+
+## Texto o script
+
+- **Determinista y repetible** → código (script)
+- **Requiere criterio** → texto de la skill
+
+Si "corre este script", lo corre con la tool `ejecutar`.
+
+---
+
+## Subagente = otra persona con su mesa
+
+Otro ciclo con la **mesa vacía**. Le delegas; regresa el resultado, no el desorden.
+
+```text
+Tú:        Revisa estos 200 archivos y dime dónde se calcula el IVA.
+Subagente: ventas.py, factura.py y reportes/iva.py.
+```
+
+- **En la mesa:** tu encargo y su respuesta
+- **Error común:** delegar sin contexto (no ve tu mesa)
+
+En el tema 4, superpowers los usa.
+
+---
+
+## `AGENTS.md` = la nota pegada en la mesa
+
+Reglas que aplican **siempre**. Se lee en cada llamada.
+
+```markdown
+- Responde en español.
+- Nunca borres la carpeta `datos/`.
+```
+
+Claude Code: `CLAUDE.md` · Gemini CLI: `GEMINI.md`
+
+- **Error común:** hacerlo largo (se paga siempre)
+
+---
+
+## Resumen
+
+| Pieza | Agrega | En la mesa |
+|---|---|---|
+| Tool | Una acción | Descripción, siempre |
+| MCP | Tools de afuera | Todas sus tools, siempre |
+| Skill | Saber hacer | Nombre y descripción |
+| Subagente | Una mesa aparte | Encargo y resultado |
+| `AGENTS.md` | Reglas | Todo, siempre |
+
+---
+
+## Cómo elegir
+
+```text
+¿Le falta una acción?             → Tool (de afuera: vía MCP)
+¿Le falta saber cómo hacerlo?     → Skill (pasos fijos: script adentro)
+¿La tarea llenaría la mesa?       → Subagente
+¿Es una regla que aplica siempre? → AGENTS.md
+```
+
+---
+
+## La memoria del agente son archivos
+
+- El modelo no recuerda nada entre sesiones
+- Sobrevive lo que quedó **escrito**: `AGENTS.md`, skills, specs
+- Tema 4: la spec y el plan viven en archivos
+
+---
+
+## Para llevar
+
+**Dirigir bien a un agente es, en gran parte, decidir qué entra en su mesa.**
