@@ -4,45 +4,135 @@ Curso introductorio · Tema 1
 
 ---
 
-## De chatear a dirigir
+## El mismo modelo, dos resultados
 
-- **Chat web:** la IA responde, tú copias y pegas
-- **Agente:** la IA actúa, tú diriges y revisas
+En la web: te da código y tú ves si funciona.
 
----
+En la terminal: lo escribe, lo prueba y lo arregla.
 
-## Tú eras sus manos
-
-Copiar → pegar → probar → "salió este error" → repetir
+**¿Por qué, si es el mismo modelo?**
 
 ---
 
-## El agente tiene manos propias
+## ¿Quién cierra el ciclo?
 
-- Lee tus archivos
-- Ejecuta comandos
-- Edita y crea archivos
-- Revisa el resultado y corrige
+- **Chat web:** tú. Copias → pegas → pruebas → "salió este error" → repites
+- **Agente:** se cierra solo. Actúa → ve el resultado → corrige
+
+---
+
+## Chat vs agente
+
+| | Chat web | Agente en la terminal |
+|---|---|---|
+| Ve tus archivos | Solo lo que pegas | La carpeta donde lo abres |
+| Ejecuta cosas | No | Sí, con tu permiso |
+| Revisa su trabajo | No | Sí |
+| Tu papel | Copiar y pegar | Pedir y revisar |
+
+---
+
+## Agente = modelo + herramientas + ciclo
+
+---
+
+## El modelo solo escribe texto
+
+- Predice la siguiente palabra
+- No tiene manos
+- No tiene memoria propia
+
+---
+
+## Herramientas: una lista
+
+Al modelo se le entrega una lista de lo que puede **pedir**:
+
+```text
+leer_archivo(ruta)       → devuelve lo que dice el archivo
+ejecutar(comando)        → corre un comando, devuelve el resultado
+editar_archivo(ruta, …)  → cambia un archivo
+```
+
+---
+
+## Pedir no es hacer
+
+El modelo escribe una solicitud:
+
+```text
+→ leer_archivo("gastos.csv")
+```
+
+Un programa alrededor del modelo (el *harness*) la **ejecuta de verdad** y le devuelve el resultado.
 
 ---
 
 ## El ciclo
 
-**Piensa → Actúa → Observa** → repite hasta terminar
+1. El programa llama al modelo
+2. El modelo pide una herramienta
+3. El programa la ejecuta
+4. Vuelve a llamar al modelo con **toda la conversación** + el resultado
+5. Repite hasta que el modelo responde sin pedir nada
 
 ---
 
-## ¿Por qué en la terminal?
+## Ejemplo: tus gastos (1/2)
 
-- Ahí viven tus archivos
-- La carpeta donde lo abres es su mesa de trabajo
-- Todo queda en tu computadora
+```text
+Herramientas: leer_archivo(ruta), ejecutar(comando)
+
+Tú:      ¿Cuánto gasté en octubre?
+Modelo:  → leer_archivo("gastos.csv")
+Sistema: ← fecha,concepto,monto
+           28/09/2026,renta,6000
+           03/10/2026,super,850
+           …
+Modelo:  → ejecutar("sumar monto donde fecha tenga '2026-10'")
+Sistema: ← Error: ninguna fila coincide con '2026-10'
+```
+
+---
+
+## Ejemplo: tus gastos (2/2)
+
+```text
+Modelo:  Las fechas vienen como día/mes/año. Corrijo.
+Modelo:  → ejecutar("sumar monto donde fecha tenga '/10/2026'")
+Sistema: ← 4320
+Modelo:  Gastaste $4,320 en octubre.
+```
+
+---
+
+## Lo que acaba de pasar
+
+- El modelo se llamó **cuatro veces**
+- Cada vez recibió **toda la conversación**
+- Leyó el error y corrigió **sin ti**
+
+---
+
+## ¿De dónde viene la agencia?
+
+- **Herramientas:** puede actuar
+- **Ciclo:** ve el resultado real
+- **Autonomía:** tú das el objetivo, él decide los pasos (dentro de tus permisos)
+
+---
+
+## Un espectro, no un interruptor
+
+- El chat web ya tiene algunas herramientas: buscar en internet, correr código en su propio espacio
+- Más herramientas + más acceso a tu entorno + más pasos sin ti = **más agente**
+- El agente en la terminal está en el extremo: trabaja sobre **tus archivos**
 
 ---
 
 ## Permisos
 
-El agente pide permiso antes de cambiar algo.
+Existen porque las herramientas **actúan de verdad**.
 
 **Lee antes de aceptar.** Si no entiendes, pregúntale.
 
@@ -68,12 +158,3 @@ El agente pide permiso antes de cambiar algo.
 
 - **Chat web:** preguntas, lluvia de ideas
 - **Agente:** cuando el resultado tiene que *existir*
-
----
-
-## Ejercicio (5 min)
-
-1. Carpeta vacía, abre tu agente ahí
-2. "Explícame qué hay en esta carpeta"
-3. Pídele un `notas.md` con 3 ideas de proyecto
-4. Confirma que existe
