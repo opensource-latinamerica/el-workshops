@@ -163,7 +163,8 @@ Al terminar el plan te pide revisarlo y te pregunta el modo de ejecución:
 
 - Cada paso va a un **subagente** con la mesa limpia (tema 2)
 - Todo en una **rama** aparte (tema 3): `main` sigue intacta
-- ¿Un *worktree* aislado? **Sí**: una copia de tu carpeta, en una rama aparte, dentro de `.worktrees/`. Los cambios están ahí, no en tu carpeta original
+- ¿Un *worktree* aislado? **No**: "No, trabaja en una rama nueva en esta carpeta." Ves los cambios en tu carpeta; es la rama del tema 3
+- El *worktree* (una copia en `.worktrees/`) sirve si varias personas o agentes trabajan a la vez
 - Lee lo que reporta después de cada paso, y los **permisos** (tema 1)
 
 Tú: **supervisas**
@@ -185,6 +186,8 @@ Tú: **supervisas**
 Tres opciones: 1. unir a la rama base en local · 2. push y abrir un **PR** · 3. dejar la rama como está
 
 - Elige la **2**: no une nada a `main`. Revisa el **diff** en GitHub y luego pide "une el PR a main"
+- Al final: "Cámbiate a main y trae los cambios", para que tu carpeta quede igual que GitHub
+- El PR es la forma estándar de colaborar: acostúmbrate desde un proyecto personal
 - Página y repo público: publícala en **GitHub Pages**, con datos de ejemplo
 - Descartar no es una opción: solo pasa si lo pides
 
@@ -203,9 +206,9 @@ Tú: **apruebas**
 
 ## Mapa del flujo (4–6)
 
-- **4. Ejecución:** ¿worktree? "Sí, usa un worktree." Lee lo que reporta y los permisos
+- **4. Ejecución:** ¿worktree? "No, trabaja en una rama nueva en esta carpeta." Lee lo que reporta y los permisos
 - **5. Revisión:** pruébalo tú. "Muéstrame cómo probarlo."
-- **6. Cierre:** "La 2" (PR) → revisa el diff en GitHub → "Une el PR a main." Si es página: "Publícalo en GitHub Pages y dame el enlace."
+- **6. Cierre:** "La 2" (PR) → revisa el diff en GitHub → "Une el PR a main." → "Cámbiate a main y trae los cambios." Si es página: "Publícalo en GitHub Pages y dame el enlace."
 
 ---
 
@@ -213,7 +216,7 @@ Tú: **apruebas**
 
 - Se confunde → sesión nueva: "Lee la spec y el plan en docs/superpowers/ y continúa desde el paso N"
 - No pregunta antes de construir → "¿Qué skills de superpowers tienes?" Si no las enumera, reinicia o revisa la instalación; si sí: "Usa la skill brainstorming de superpowers"
-- ¿No ves los cambios? → "¿En qué carpeta estás trabajando?"
+- ¿No ves los cambios? → "¿En qué rama estás?"
 - Algo falla → "No adivines: encuentra la causa antes de cambiar algo"
 - Rompió algo → "Regresa a la última versión que funcionaba; dime qué commit es"
 - No entiendes → "Explícame en sencillo"

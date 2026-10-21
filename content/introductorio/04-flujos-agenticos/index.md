@@ -209,9 +209,13 @@ Cada paso del plan va a un **subagente** con la mesa limpia (tema 2): lee la spe
 su paso, lo hace y regresa el resultado. Tu mesa no se llena con el desorden de cada
 paso. Todo pasa en una **rama** aparte (tema 3), así que `main` sigue intacta.
 
-Superpowers puede preguntarte si quieres un *worktree* aislado: una copia de tu
-carpeta, en una rama aparte, dentro de `.worktrees/`. Di que sí. Ojo: los cambios
-quedan en esa copia, no en tu carpeta original.
+Superpowers puede preguntarte si quieres un *worktree* aislado. Responde: **"No,
+trabaja en una rama nueva en esta carpeta."** Así ves los cambios en tu misma carpeta,
+y es la rama del tema 3.
+
+El *worktree* (una copia de tu carpeta en otra rama, dentro de `.worktrees/`) sirve
+cuando varias personas o varios agentes trabajan a la vez en el mismo proyecto y no
+quieres que se pisen. En la práctica no hace falta.
 
 - **Tu papel:** supervisas. Con subagentes solo ves el encargo y el resultado (tema
   2): lee lo que reporta después de cada paso, y los **permisos** (tema 1): lee antes
@@ -235,8 +239,12 @@ El agente te pregunta qué hacer con la rama (tema 3) y te da tres opciones:
 3. Dejar la rama como está.
 
 Elige la 2 (PR). Ojo: la opción 2 no une nada a `main`. Revisa el **diff** en GitHub
-y luego pide "une el PR a main". Si tu proyecto es una página y el repo es público,
-publícala en **GitHub Pages**, con datos de ejemplo.
+y luego pide "une el PR a main". Al final, pide **"Cámbiate a main y trae los
+cambios"**, para que tu carpeta quede igual que GitHub. Si tu proyecto es una página
+y el repo es público, publícala en **GitHub Pages**, con datos de ejemplo.
+
+El PR es la forma estándar de trabajar cuando colaboras con otras personas; conviene
+acostumbrarse desde un proyecto personal.
 
 Descartar el trabajo no aparece en las opciones: solo pasa si lo pides tú.
 
@@ -258,8 +266,8 @@ corresponden:
 
 También puedes ver:
 
-- `using-git-worktrees`: crea el *worktree*, la copia de tu carpeta en una rama
-  aparte, dentro de `.worktrees/`.
+- `using-git-worktrees`: pregunta si quieres un *worktree*, una copia de tu carpeta
+  en otra rama. En la práctica respondes que no: usas una rama en tu carpeta.
 - `test-driven-development`: primero escribe la prueba de "terminado" y luego el
   código.
 - `executing-plans`: el modo *Native*; hace todos los pasos en la misma sesión y deja
@@ -278,9 +286,9 @@ Tu guía para las 2 horas de práctica.
 | 1. Idea | Describe tu problema real, no la solución. Te va a ofrecer saltarte las preguntas: di que no | "Quiero hacer brainstorming sobre…" |
 | 2. Spec | Lee la spec completa (queda en `docs/superpowers/specs/`); corrige lo que no sea tuyo | "Esto no es lo que quiero: …" |
 | 3. Plan | Revisa que cada paso tenga un "terminado" comprobable. Cuando te pregunte el modo de ejecución, elige *Subagent-driven* | "Resúmeme el plan en lenguaje sencillo, un paso por línea, con su 'terminado'." Luego: "Subagent-driven." |
-| 4. Ejecución | Si te pregunta por un worktree, di que sí. Lee lo que reporta después de cada paso, y los permisos antes de aceptar | "Sí, usa un worktree." |
+| 4. Ejecución | Si te pregunta por un worktree, di que no: trabaja en una rama nueva en tu carpeta. Lee lo que reporta después de cada paso, y los permisos antes de aceptar | "No, trabaja en una rama nueva en esta carpeta." |
 | 5. Revisión | Prueba tú mismo el resultado | "Muéstrame cómo probarlo." |
-| 6. Cierre | De las 3 opciones (unir en local, PR, dejar la rama), elige la 2 (PR); revisa el diff en GitHub y luego pide que lo una. Si es una página y el repo es público, publícala en GitHub Pages con datos de ejemplo. Descartar solo pasa si lo pides | "La 2." Después de revisar: "Une el PR a main." Si es página: "Publícalo en GitHub Pages y dame el enlace." |
+| 6. Cierre | De las 3 opciones (unir en local, PR, dejar la rama), elige la 2 (PR); revisa el diff en GitHub, pide que lo una y luego que traiga los cambios a tu carpeta. Si es una página y el repo es público, publícala en GitHub Pages con datos de ejemplo. Descartar solo pasa si lo pides | "La 2." Después de revisar: "Une el PR a main." Luego: "Cámbiate a main y trae los cambios." Si es página: "Publícalo en GitHub Pages y dame el enlace." |
 
 ### Si te atoras
 
@@ -292,8 +300,8 @@ Tu guía para las 2 horas de práctica.
   instalación. Si las enumera, dile "Usa la skill brainstorming de superpowers."
   Para entender después qué salió mal en una sesión, superpowers tiene otra skill:
   `diagnosing-superpowers`.
-- **No ves los cambios:** pregúntale "¿En qué carpeta estás trabajando?" Si usa un
-  worktree, los cambios están en `.worktrees/`, no en tu carpeta original.
+- **No ves los cambios:** pregúntale "¿En qué rama estás?" Si sigue en una rama sin
+  unir, los cambios aún no están en `main`.
 - **Algo falla:** "No adivines: encuentra la causa antes de cambiar algo." Superpowers
   tiene una skill para esto (`systematic-debugging`): primero entiende por qué falla,
   después arregla.
