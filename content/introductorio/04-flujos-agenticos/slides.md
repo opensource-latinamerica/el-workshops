@@ -6,11 +6,7 @@ Curso introductorio · Tema 4
 
 ## Donde todo se junta
 
-- **Tema 1:** qué es un agente y cómo pedirle las cosas
-- **Tema 2:** la mesa y las cinco piezas
-- **Tema 3:** Git y GitHub como red
-
-Ya tienes las piezas. Falta el **orden**.
+Ya tienes las piezas de los temas 1 a 3. Falta el **orden**.
 
 ---
 
@@ -20,7 +16,7 @@ Ya tienes las piezas. Falta el **orden**.
 
 Mucha **autonomía**, poco **contexto**.
 
-La solución no es un mejor pedido: es un mejor **flujo**.
+No basta con un mejor pedido: hace falta un mejor **flujo**.
 
 ---
 
@@ -32,7 +28,7 @@ No instalas una función: instalas un **flujo de trabajo completo**.
 
 **Superpowers** (github.com/obra/superpowers): preguntar, escribir lo acordado, planear, revisar, comprobar.
 
-Funciona en Claude Code, Codex y otros.
+Funciona en Claude Code, Codex, Gemini CLI y otros.
 
 --
 
@@ -51,17 +47,13 @@ Funciona en Claude Code, Codex y otros.
 └──────────────────────────────────────────────────────┘
 ```
 
-Cada receta sale del cajón **cuando hace falta**.
+La regla corta (`using-superpowers`) va **siempre** en la mesa. Cada receta se queda en el cajón **hasta que aplica**.
 
 ---
 
 ## Spec-driven development
 
-Primero **qué** y **por qué**. Después el **cómo**.
-
---
-
-## Corregir temprano es barato
+Primero **qué** y **por qué**. Después el **cómo**. Corregir temprano es barato:
 
 ```text
 Si corriges en…    Te cuesta
@@ -89,14 +81,6 @@ No entra:   Cuentas de banco, varias monedas, usuarios.
 Fracaso si: Registrar un gasto toma más de 10 segundos.
 ```
 
---
-
-## La spec es un archivo
-
-**La memoria del agente son archivos** (tema 2).
-
-La spec y el plan sobreviven a una sesión nueva, y un subagente con la mesa vacía los puede leer.
-
 ---
 
 ## El flujo
@@ -119,8 +103,8 @@ La spec y el plan sobreviven a una sesión nueva, y un subagente con la mesa vac
 Tú:      Quiero una app para mis gastos.
 Agente:  ¿Qué es lo que te molesta hoy de llevar tus gastos?
 Tú:      Que no sé en qué se me va el dinero a fin de mes.
-Agente:  ¿Te serviría más ver categorías o ver cómo cambia mes a mes?
-Tú:      Categorías.
+Agente:  Cuéntame la última vez que te pasó.
+Tú:      No supe cuánto fue de súper y cuánto de salidas.
 Agente:  Entiendo esto: … ¿Qué falta o qué está mal?
 ```
 
@@ -134,17 +118,20 @@ Agente:  Entiendo esto: … ¿Qué falta o qué está mal?
 
 **No construye nada hasta que apruebes.**
 
+Te va a ofrecer saltarte las preguntas: **di que no**.
+
 Pieza: una **skill** (tema 2) · Tú: **decides**
 
 --
 
 ## 2. Spec
 
-- Lo acordado queda en un **archivo**
-- Léela completa; corrige lo que no sea tuyo
-- Aquí corregir es más barato
+- Lo acordado queda en un **archivo**: la memoria del agente son archivos (tema 2)
+- La spec, en `docs/superpowers/specs/` (con commit); el plan, en `docs/superpowers/plans/`
+- Sobreviven a una sesión nueva, y un subagente con la mesa vacía los puede leer
+- Léela completa y corrige lo que no sea tuyo: aquí corregir es más barato
 
-Pieza: la memoria son archivos (tema 2) · Tú: **decides**
+Tú: **decides**
 
 --
 
@@ -157,7 +144,18 @@ Paso 2:     Sumar los gastos por categoría.
 Terminado:  Con el archivo de prueba, "super" suma 850.
 ```
 
+"Resúmeme el plan en lenguaje sencillo, un paso por línea, con su 'terminado'"
+
 Pieza: cómo pedir (tema 1) · Tú: **supervisas**
+
+--
+
+## ¿Subagent-driven o Native?
+
+Al terminar el plan te pide revisarlo y te pregunta el modo de ejecución:
+
+- ***Subagent-driven*:** un subagente nuevo por paso, revisado antes de seguir. **Elige este.**
+- ***Native*:** el mismo agente hace todo en esta sesión; una sola revisión al final
 
 --
 
@@ -165,7 +163,8 @@ Pieza: cómo pedir (tema 1) · Tú: **supervisas**
 
 - Cada paso va a un **subagente** con la mesa limpia (tema 2)
 - Todo en una **rama** aparte (tema 3): `main` sigue intacta
-- Lee la **traza** y acepta los **permisos** con cuidado (tema 1)
+- ¿Un *worktree* aislado? **Sí**: una copia de tu carpeta, en una rama aparte, dentro de `.worktrees/`. Los cambios están ahí, no en tu carpeta original
+- Lee lo que reporta después de cada paso, y los **permisos** (tema 1)
 
 Tú: **supervisas**
 
@@ -183,31 +182,40 @@ Tú: **supervisas**
 
 ## 6. Cierre
 
-- **PR** y unión a `main`, o descartar la rama (tema 3)
-- Si es una página: publícala en **GitHub Pages**
-- Revisa el **diff** antes de unir
+Tres opciones: 1. unir a la rama base en local · 2. push y abrir un **PR** · 3. dejar la rama como está
+
+- Elige la **2**: no une nada a `main`. Revisa el **diff** en GitHub y luego pide "une el PR a main"
+- Página y repo público: publícala en **GitHub Pages**, con datos de ejemplo
+- Descartar no es una opción: solo pasa si lo pides
 
 Tú: **apruebas**
 
 ---
 
-## Mapa del flujo
+## Mapa del flujo (0–3)
 
-0. Preparar: carpeta, repo, `AGENTS.md` con el bloque de Git (o `CLAUDE.md`/`GEMINI.md`; ver tema 2)
-1. Idea: describe tu **problema**, no la solución
-2. Spec: léela completa y corrige
-3. Plan: pasos pequeños y comprobables
-4. Ejecución: lee la traza y los permisos
-5. Revisión: pruébalo tú
-6. Cierre: revisa el diff, abre un PR y únelo a `main`; si es una página, publícala en GitHub Pages
+- **0. Preparar:** `mkdir mi-proyecto`, `cd mi-proyecto` y abre ahí el agente. "Inicia un repo de Git aquí, crea el repo en mi GitHub (público si lo voy a publicar en Pages; ver tema 3), súbelo y crea un `AGENTS.md` con…" el bloque de Git del tema 3 (o `CLAUDE.md`/`GEMINI.md`)
+- **1. Idea:** tu **problema**, no la solución. "Quiero hacer brainstorming sobre…" ¿Saltarte las preguntas? **No**
+- **2. Spec:** léela completa. "Esto no es lo que quiero: …"
+- **3. Plan:** "Resúmeme el plan en lenguaje sencillo, un paso por línea, con su 'terminado'". Modo: **Subagent-driven**
+
+--
+
+## Mapa del flujo (4–6)
+
+- **4. Ejecución:** ¿worktree? "Sí, usa un worktree." Lee lo que reporta y los permisos
+- **5. Revisión:** pruébalo tú. "Muéstrame cómo probarlo."
+- **6. Cierre:** "La 2" (PR) → revisa el diff en GitHub → "Une el PR a main." Si es página: "Publícalo en GitHub Pages y dame el enlace."
 
 ---
 
 ## Si te atoras
 
-- Se confunde → sesión nueva: "Lee la spec y el plan, y continúa desde el paso N"
+- Se confunde → sesión nueva: "Lee la spec y el plan en docs/superpowers/ y continúa desde el paso N"
+- No pregunta antes de construir → "¿Qué skills de superpowers tienes?" Si no las enumera, reinicia o revisa la instalación; si sí: "Usa la skill brainstorming de superpowers"
+- ¿No ves los cambios? → "¿En qué carpeta estás trabajando?"
 - Algo falla → "No adivines: encuentra la causa antes de cambiar algo"
-- Rompió algo → "Regresa al último commit"
+- Rompió algo → "Regresa a la última versión que funcionaba; dime qué commit es"
 - No entiendes → "Explícame en sencillo"
 - Creció mucho → "Recórtalo a lo mínimo"
 
@@ -216,3 +224,5 @@ Tú: **apruebas**
 # A construir
 
 2 horas · tu proyecto · tu flujo
+
+Guía completa: página del tema 4, sección **Mapa del flujo**
