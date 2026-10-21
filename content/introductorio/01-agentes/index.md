@@ -132,7 +132,7 @@ agente**.
 
 El agente en la terminal está en el extremo porque trabaja sobre **tus archivos**. La
 terminal es donde viven tus archivos y tus programas: la carpeta donde lo abres se
-vuelve su mesa de trabajo, y todo lo que hace queda en tu computadora para que lo
+vuelve su lugar de trabajo, y todo lo que hace queda en tu computadora para que lo
 revises.
 
 ## Permisos

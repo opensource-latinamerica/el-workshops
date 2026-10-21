@@ -175,9 +175,78 @@ Subagente → tú:  Se calcula en ventas.py, factura.py y reportes/iva.py.
 
 Tu mesa solo recibe esas tres líneas.
 
+**Regla central: si solo te importa la conclusión, no el camino → delégalo.**
+
+Compara las dos mesas con la misma pregunta:
+
+```text
+SIN SUBAGENTE                   CON SUBAGENTE
+Tu mesa:                        Tu mesa:
+  siempre                         siempre
+  archivo 1 leído                 encargo (2 líneas)
+  archivo 2 leído                 respuesta (3 líneas)
+  …                               ESPACIO LIBRE
+  archivo 200 leído
+  respuesta (3 líneas)
+
+→ mesa llena, y apenas          → mesa limpia para seguir
+  empiezas
+```
+
+La respuesta es la misma. Lo que cambia es qué quedó en **tu** mesa.
+
+#### Cuándo delegar: cuatro señales
+
+- **La respuesta es corta, pero buscarla es largo.** "¿Dónde…?", "¿qué dice…?",
+  "resume estos documentos".
+- **Mucha lectura que no vas a necesitar después.** Logs, 30 PDFs, documentación.
+- **Tareas independientes.** "Investiga estas 3 opciones": un subagente por opción, en
+  paralelo.
+- **Una segunda opinión limpia.** "Revisa lo que hicimos". No carga tus supuestos
+  porque no ve tu mesa.
+
+#### Cuándo NO delegar
+
+- **Tareas pequeñas.** El subagente arma su mesa desde cero, y eso cuesta.
+- **Vas a necesitar los detalles.** Si después vas a editar esos mismos archivos, mejor
+  que estén en tu mesa.
+- **Pasos encadenados que dependen de lo que van platicando.** El subagente no oyó esa
+  conversación.
+
+#### Cómo pedirlo
+
+Dilo explícito: **"Usa un subagente para…"**. Algunos agentes deciden solos cuándo
+delegar, pero no cuentes con eso.
+
+Un buen encargo es la fórmula del tema 1 (objetivo + contexto + terminado), aplicada a
+delegar:
+
+- **Objetivo:** qué tiene que averiguar o hacer.
+- **Contexto:** lo que no ve. No conoce tu mesa: dile todo lo que necesita saber.
+- **Terminado:** **qué te regrese y en qué forma** ("solo las rutas y una línea por
+  cada una").
+
+Esa última parte es la que protege tu mesa. Si no la pides, te puede regresar un
+reporte de dos páginas y volviste a llenarla.
+
+❌ "Usa un subagente para revisar el IVA."
+
+✅ "Usa un subagente para buscar en `src/` dónde se calcula el IVA. Es el impuesto de
+16 % que se suma en las facturas. Regrésame solo las rutas de los archivos y una línea
+por cada una que diga qué hace."
+
+#### Un matiz honesto
+
+El subagente **no ahorra tokens en total**. A veces gasta más: tiene que leer lo mismo,
+y además arma su propia mesa. Lo que ahorra es **tu** mesa. Pagas un poco más para que
+la conversación principal siga clara.
+
 - **Qué ocupa en la mesa:** tu encargo y su respuesta final.
-- **Error común:** delegar sin dar contexto. La otra persona no ve tu mesa: dile todo
-  lo que necesita saber.
+- **Error común:** delegar sin decir qué contexto necesita ni qué te debe regresar.
+
+> **Para quien presenta:** antes de mostrar las señales, pregunta "¿cuándo NO
+> conviene delegar?". Luego pide a alguien que reescriba en voz alta el encargo ❌
+> con las tres partes.
 
 En el tema 4 verás que superpowers usa subagentes para repartir el trabajo.
 
@@ -204,7 +273,7 @@ en cada llamada.
 | Tool | Una mano | Una acción | Su descripción, siempre | Ninguno: ya vienen |
 | MCP | Un enchufe que trae manos | Tools de un servicio externo | Todas sus tools, siempre | Instalar muchos "por si acaso" |
 | Skill | Una receta en el cajón | Saber hacer | Nombre y descripción; el resto si aplica | Meter el procedimiento en `AGENTS.md` |
-| Subagente | Otra persona con su mesa | Una mesa aparte | Tu encargo y su resultado | Delegar sin dar contexto |
+| Subagente | Otra persona con su mesa | Una mesa aparte | Tu encargo y su resultado | Delegar sin dar contexto ni decir qué regresar |
 | `AGENTS.md` | La nota pegada en la mesa | Reglas que aplican siempre | Todo, siempre | Hacerlo largo |
 
 > **Para quien presenta:** para cada pieza, pregunta "¿qué ocupa en la mesa?" antes
@@ -220,6 +289,7 @@ Cuando el agente no hace lo que quieres, pregúntate qué le falta:
 ¿Le falta saber cómo hacerlo?     → Skill
                                     (los pasos fijos, en un script adentro)
 ¿La tarea llenaría la mesa?       → Subagente
+                                    (si solo te importa la conclusión)
 ¿Es una regla que aplica siempre? → AGENTS.md
 ```
 

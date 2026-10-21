@@ -146,9 +146,56 @@ Subagente: ventas.py, factura.py y reportes/iva.py.
 ```
 
 - **En la mesa:** tu encargo y su respuesta
-- **Error común:** delegar sin contexto (no ve tu mesa)
 
-En el tema 4, superpowers los usa.
+**Si solo te importa la conclusión, no el camino → delégalo.**
+
+--
+
+## Tu mesa, antes y después
+
+```text
+SIN SUBAGENTE              CON SUBAGENTE
+  siempre                    siempre
+  archivo 1 leído            encargo (2 líneas)
+  archivo 2 leído            respuesta (3 líneas)
+  …                          ESPACIO LIBRE
+  archivo 200 leído
+  respuesta (3 líneas)
+
+→ mesa llena,              → mesa limpia
+  y apenas empiezas          para seguir
+```
+
+--
+
+## ¿Delegar o no?
+
+**Sí, cuando…**
+
+- La respuesta es corta, pero buscarla es largo
+- Hay mucha lectura que no vas a necesitar (logs, PDFs)
+- Son tareas independientes → en paralelo
+- Quieres una segunda opinión limpia (no ve tus supuestos)
+
+**No, cuando…**
+
+- La tarea es pequeña (armar su mesa cuesta)
+- Vas a necesitar los detalles después
+- Los pasos dependen de lo que van platicando
+
+--
+
+## Cómo pedirlo
+
+"**Usa un subagente para…**" — no cuentes con que decida solo.
+
+Objetivo + contexto + **qué te regrese y en qué forma**
+
+❌ "Usa un subagente para revisar el IVA."
+
+✅ "Usa un subagente para buscar en `src/` dónde se calcula el IVA (16 % en facturas). Regrésame solo las rutas y una línea por cada una."
+
+**Ojo:** no ahorra tokens en total; ahorra **tu** mesa. En el tema 4, superpowers los usa.
 
 ---
 
@@ -184,7 +231,7 @@ Claude Code: `CLAUDE.md` · Gemini CLI: `GEMINI.md`
 ```text
 ¿Le falta una acción?             → Tool (de afuera: vía MCP)
 ¿Le falta saber cómo hacerlo?     → Skill (pasos fijos: script adentro)
-¿La tarea llenaría la mesa?       → Subagente
+¿Solo te importa la conclusión?   → Subagente
 ¿Es una regla que aplica siempre? → AGENTS.md
 ```
 
@@ -195,9 +242,3 @@ Claude Code: `CLAUDE.md` · Gemini CLI: `GEMINI.md`
 - El modelo no recuerda nada entre sesiones
 - Sobrevive lo que quedó **escrito**: `AGENTS.md`, skills, specs
 - Tema 4: la spec y el plan viven en archivos
-
----
-
-## Para llevar
-
-**Dirigir bien a un agente es, en gran parte, decidir qué entra en su mesa.**
