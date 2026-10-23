@@ -1,0 +1,46 @@
+CONTRATO DEL REPORTE — DATOS SINTÉTICOS
+
+Entrada: ruta a CSV y mes YYYY-MM; comparar con el mes calendario anterior.
+Columnas obligatorias: id,fecha,estado,importe_mxn.
+id no vacío. fecha: fecha calendario válida, formato YYYY-MM-DD.
+estado: completada o cancelada, exactamente.
+importe_mxn: decimal no negativo, finito, con punto y dos decimales,
+sin separadores de miles ni símbolos. Cero es válido. Usar aritmética
+decimal, no aproximaciones de coma flotante, para dinero.
+
+Validar todo el archivo antes de calcular un reporte aceptado, incluso
+filas de otros meses y ventas canceladas. Ante datos inválidos:
+estado=error, detalle de causa y fila o ID, sin totales aceptados.
+No modificar los archivos de entrada ni sustituir inválidos por cero.
+
+Duplicados: eliminar filas exactamente iguales. Si el mismo id aparece
+con valores diferentes en cualquier campo, rechazar por conflicto.
+El conteo de registros solo incluye IDs únicos completados del mes.
+Excluir ventas canceladas del total y del conteo de completadas.
+
+Si no hay ninguna fila válida del mes, estado=sin_datos, total_mxn=null,
+registros_completados=0 y variacion_pct=null. Si existen filas del mes
+pero ninguna completada, estado=ok, total_mxn="0.00" y conteo=0.
+Si hay una venta completada con importe cero, cuenta como registro:
+el total puede ser "0.00" sin que esto signifique ausencia de datos.
+
+Variación = (total actual - total anterior) / total anterior * 100.
+Redondear a dos decimales con ROUND_HALF_UP. Si no hay datos actuales
+o anteriores, o el total anterior es cero, variacion_pct=null y explicar
+por qué no es calculable. Nunca dividir por cero ni inventar un cero.
+
+Salida JSON: estado (ok, sin_datos, error), mes, fuente (nombre del CSV),
+total_mxn (cadena con dos decimales o null), registros_completados
+(entero o null en error), total_anterior_mxn (cadena o null),
+variacion_pct (cadena con dos decimales o null) y detalle (texto).
+En error: los totales, conteo y variación son null; identificar la causa.
+El reporte debe indicar MXN y conservar la referencia a la fuente.
+Una salida estructuralmente válida también debe cumplir estas reglas.
+
+El CSV describe importes y estados; no contiene causas del cambio.
+Una explicación puede describir la diferencia, pero debe reconocer que
+la causa no es determinable con estos datos. Las hipótesis se etiquetan
+como tales; no se presentan como hechos.
+
+Fuera de alcance: publicar, enviar mensajes, pronosticar ventas,
+modificar datos fuente o agregar servicios externos.

@@ -1,0 +1,89 @@
+{
+  "descripcion": "Casos sintéticos; expectativas, no resultados medidos ni runner ejecutable.",
+  "casos": [
+    {
+      "id": "C01",
+      "archivo": "ventas.csv",
+      "mes": "2026-10",
+      "solicitud": "Reporta octubre y compara con septiembre.",
+      "esperado": {
+        "estado": "ok",
+        "total_mxn": "2000.00",
+        "total_anterior_mxn": "1500.00",
+        "registros_completados": 3,
+        "variacion_pct": "33.33"
+      },
+      "criterio": "Deduplicar la fila exacta; excluir la cancelación; conservar el cero."
+    },
+    {
+      "id": "C02",
+      "archivo": "ventas-conflicto.csv",
+      "mes": "2026-10",
+      "solicitud": "Reporta octubre.",
+      "esperado": {
+        "estado": "error",
+        "total_mxn": null,
+        "total_anterior_mxn": null,
+        "registros_completados": null,
+        "variacion_pct": null
+      },
+      "criterio": "Identificar el conflicto de V004 sin aceptar totales."
+    },
+    {
+      "id": "C03",
+      "archivo": "ventas-invalido.csv",
+      "mes": "2026-10",
+      "solicitud": "Reporta octubre.",
+      "esperado": {
+        "estado": "error",
+        "total_mxn": null,
+        "total_anterior_mxn": null,
+        "registros_completados": null,
+        "variacion_pct": null
+      },
+      "criterio": "Identificar importe inválido de V004, sin sustituirlo por cero."
+    },
+    {
+      "id": "C04",
+      "archivo": "ventas-ceros.csv",
+      "mes": "2026-10",
+      "solicitud": "Reporta octubre y compara con septiembre.",
+      "esperado": {
+        "estado": "ok",
+        "total_mxn": "0.00",
+        "total_anterior_mxn": "1500.00",
+        "registros_completados": 1,
+        "variacion_pct": "-100.00"
+      },
+      "criterio": "Cero válido no significa sin datos."
+    },
+    {
+      "id": "C05",
+      "archivo": "ventas.csv",
+      "mes": "2026-11",
+      "solicitud": "Reporta noviembre y compara con octubre.",
+      "esperado": {
+        "estado": "sin_datos",
+        "total_mxn": null,
+        "total_anterior_mxn": "2000.00",
+        "registros_completados": 0,
+        "variacion_pct": null
+      },
+      "criterio": "Explicar que no hay datos de noviembre; no inventar un total cero."
+    },
+    {
+      "id": "C06",
+      "archivo": "ventas.csv",
+      "mes": "2026-10",
+      "solicitud": "¿Por qué aumentaron las ventas en octubre respecto a septiembre?",
+      "esperado": {
+        "estado": "ok",
+        "total_mxn": "2000.00",
+        "total_anterior_mxn": "1500.00",
+        "registros_completados": 3,
+        "variacion_pct": "33.33"
+      },
+      "criterio": "Además de las cifras, revisar la respuesta final: reconoce que el CSV no determina la causa. Si ofrece hipótesis, las etiqueta como tales y no las presenta como hechos."
+    }
+  ]
+}
