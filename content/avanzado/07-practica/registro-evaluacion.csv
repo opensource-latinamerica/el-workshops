@@ -1,0 +1,13 @@
+version,caso,intento,objeto_evaluado,modelo,configuracion,estado,evidencia,tiempo_segundos,tokens,costo,intervenciones,notas
+inicial,C01,1,por_definir,,,no_ejecutado,,,,,,
+inicial,C02,1,por_definir,,,no_ejecutado,,,,,,
+inicial,C03,1,por_definir,,,no_ejecutado,,,,,,
+inicial,C04,1,por_definir,,,no_ejecutado,,,,,,
+inicial,C05,1,por_definir,,,no_ejecutado,,,,,,
+inicial,C06,1,por_definir,,,no_ejecutado,,,,,,
+mejorada,C01,1,por_definir,,,no_ejecutado,,,,,,
+mejorada,C02,1,por_definir,,,no_ejecutado,,,,,,
+mejorada,C03,1,por_definir,,,no_ejecutado,,,,,,
+mejorada,C04,1,por_definir,,,no_ejecutado,,,,,,
+mejorada,C05,1,por_definir,,,no_ejecutado,,,,,,
+mejorada,C06,1,por_definir,,,no_ejecutado,,,,,,

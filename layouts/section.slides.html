@@ -1,0 +1,11 @@
+{{- /* Une los slides.md de las sesiones del curso, en el orden del sidebar (weight). */}}
+{{- $decks := slice }}
+{{- range .RegularPages }}
+  {{- with .Resources.Get "slides.md" }}
+    {{- $decks = $decks | append .RawContent }}
+  {{- end }}
+{{- end }}
+{{- if not $decks }}
+  {{- errorf "%s: ninguna sesión tiene slides.md" .File.Path }}
+{{- end }}
+{{- partial "reveal.html" (dict "title" .Title "markdown" (delimit $decks "\n\n---\n\n")) }}
