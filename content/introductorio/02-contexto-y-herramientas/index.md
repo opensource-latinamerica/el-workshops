@@ -3,7 +3,6 @@ title: "2. Contexto y herramientas"
 weight: 3
 outputs: [html, slides]
 ---
-
 [Abrir la presentación](slides.html)
 
 ## Lo que el modelo lee
@@ -20,7 +19,7 @@ idea que te vas a llevar es esta:
 
 Todo lo que el modelo ve en una llamada se llama **ventana de contexto**. Piénsala
 como una mesa de trabajo con espacio limitado. Lo que está en la mesa, el modelo lo
-ve. Lo que no está, no existe para él.
+ve. 
 
 En el tema 1 dijimos que la carpeta donde abres el agente es su lugar de trabajo. La
 carpeta es todo lo que **puede alcanzar**. La mesa es lo que **tiene enfrente** en
@@ -62,18 +61,14 @@ crece con cada paso del ciclo.
   resume la conversación para hacer espacio. Al resumir, se pierden detalles.
 - **Se degrada antes de llenarse.** Con mucho encima, lo importante se pierde entre
   lo demás. El agente empieza a olvidar instrucciones o a confundir cosas, aunque
-  todavía quede espacio.
+  todavía quede espacio. A esto se le llama *context rot*; lo vemos más abajo.
 - **Se borra.** Una sesión nueva es una mesa vacía. Solo vuelve lo de "siempre"; la
   conversación anterior desaparece.
 
-> **Para quien presenta:** dibuja la mesa en el pizarrón y ve "poniendo" cosas
-> encima mientras explicas el diagrama. Luego pregunta: "si leo un archivo de 500
-> páginas, ¿qué le pasa a la mesa?". Que lo respondan antes de pasar a tokens.
 
 ## Uso y tokens
 
-El modelo no lee palabras, lee **tokens**: pedazos de palabra. "Agente" puede ser uno
-o dos tokens. El tamaño de la mesa y lo que gastas de tu plan se miden en tokens.
+El modelo no lee palabras, lee **tokens**: pedazos de palabra. El tamaño de la mesa y lo que gastas de tu plan se miden en tokens.
 
 Como cada llamada reenvía toda la mesa, **el costo crece con cada paso**:
 
@@ -87,8 +82,80 @@ Paso 3:  instrucciones + tu mensaje + respuesta del paso 1 + paso 2
 La respuesta del paso 1 es el archivo enorme, que llega como resultado. No se paga una
 vez: se vuelve a pagar en todos los pasos siguientes.
 
-**Regla práctica: una tarea, una sesión.** Cuando cambies de tema, empieza una sesión
-nueva. Mesa limpia, menos costo, menos confusión.
+## El contexto no es gratis
+
+Todo lo que entra a la mesa se paga dos veces: en **tokens**, porque se reenvía en
+cada paso, y en **calidad**, porque compite por la atención del modelo.
+
+### Context rot: la mesa se degrada
+
+*Context rot*  es la segunda consecuencia de arriba:
+conforme la mesa se llena, el modelo rinde peor. No porque se acabe el espacio, sino
+porque tiene demasiado encima. Sigue las instrucciones con menos cuidado, mezcla lo
+viejo con lo nuevo y se le escapan detalles que quedaron a media conversación.
+
+Las pruebas con distintos modelos coinciden en que el rendimiento baja conforme crece
+lo que tienen que leer, incluso en tareas sencillas. Y empieza mucho antes de llenarse:
+en el trabajo diario con agentes se nota desde que se usa alrededor del **20–25 % de
+la ventana**. El número exacto cambia según el modelo y la tarea. Lo que importa es la
+idea: **una mesa a una cuarta parte ya puede estar degradada.**
+
+Muchos agentes te muestran cuánto llevas usado. En Claude Code, el comando `/context`:
+
+![Uso de contexto en Claude Code: 45.6k de 1.0M tokens (5 %), repartidos entre instrucciones, herramientas, skills, mensajes y espacio libre](context-usage.png)
+
+Las categorías son las de la mesa: las instrucciones del harness (*System prompt*), la
+lista de herramientas (*System tools*), las instrucciones de los MCP, las skills y la
+conversación (*Messages*). Más de la mitad de lo usado, unos 26k tokens, es lo de
+"siempre": ya estaba ahí antes de tu primer mensaje. El *Autocompact buffer* es espacio
+que el harness reserva para poder compactar.
+
+### Las sesiones largas se comen tu plan
+
+Como cada paso reenvía todo lo anterior, el mensaje 40 de una sesión cuesta mucho más
+que el mensaje 4, aunque digas lo mismo. Una sesión larga gasta tu plan más rápido **y**
+trabaja con la mesa más degradada: pagas más por un resultado peor.
+
+Ese gasto se ve en tu plan. En Claude Code, `/usage` muestra cuánto llevas:
+
+![Uso del plan Claude Pro: 5 % del límite de 5 horas y 1 % del límite semanal](plan-usage.png)
+
+Un plan como este tiene dos límites: uno que se reinicia cada 5 horas y otro semanal.
+Cada mensaje gasta de los dos, y en una sesión larga cada mensaje gasta más. Ojo: aquí
+*Session* es esa ventana de 5 horas, no una conversación con el agente.
+
+### El tradeoff
+
+Aquí aparece la tensión de trabajar con IA:
+
+```text
+Poco contexto                 Demasiado contexto
+  no sabe lo que necesita       se pierde entre tanto
+  adivina o inventa             olvida instrucciones
+                                gasta tu plan más rápido
+
+              ↑ el punto óptimo:
+          lo justo para esta tarea
+```
+
+### El criterio: tareas pequeñas
+
+La habilidad que hay que desarrollar es **partir el trabajo en tareas lo bastante
+pequeñas para que cada una quepa con holgura en una mesa limpia.** Así el agente
+trabaja siempre cerca de su punto óptimo.
+
+- **Una tarea, una sesión.** Cuando termines o cambies de tema, empieza una sesión
+  nueva.
+- **Si la tarea es grande, divídela** en pasos que se puedan hacer y revisar por
+  separado.
+- **Lo que tiene que pasar a la siguiente sesión, escríbelo en un archivo** (lo verás
+  al final de este tema).
+- **Si el agente empieza a olvidar o confundirse, no insistas.** Pídele un resumen de
+  lo importante y empieza una sesión nueva con él.
+
+En el tema 4 verás un flujo que hace justo esto: convierte un proyecto en un plan de
+tareas pequeñas.
+
 
 ## Las cinco piezas
 
@@ -284,16 +351,14 @@ La idea es la misma. En el curso le decimos `AGENTS.md` a cualquiera de ellos.
 
 ### Resumen
 
-| Pieza | En la metáfora | Agrega | Qué ocupa en la mesa | Error común |
-|---|---|---|---|---|
-| Tool | Una mano | Una acción | Su descripción, siempre; y lo que devuelve, cada vez que se usa | Pedirle algo sin tool (y que lo invente) o aceptar sin leer el permiso |
-| MCP | Un enchufe que trae manos | Tools de un servicio externo | Todas sus tools, siempre; y lo que devuelven, cada vez que se usan | Instalar muchos "por si acaso" |
-| Skill | Una receta en el cajón | Saber hacer | Nombre y descripción; el resto si aplica (y se queda) | Meter el procedimiento en `AGENTS.md` |
-| Subagente | Otra persona con su mesa | Una mesa aparte | Tu encargo y su resultado | Delegar sin dar contexto ni decir qué regresar |
-| `AGENTS.md` | La nota pegada en la mesa | Reglas que aplican siempre | Todo, siempre | Hacerlo largo |
+| Pieza         | En la metáfora           | Agrega                       | Qué ocupa en la mesa                                              | Error común                                                           |
+| ------------- | ------------------------- | ---------------------------- | ------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| Tool          | Una mano                  | Una acción                  | Su descripción, siempre; y lo que devuelve, cada vez que se usa   | Pedirle algo sin tool (y que lo invente) o aceptar sin leer el permiso |
+| MCP           | Un enchufe que trae manos | Tools de un servicio externo | Todas sus tools, siempre; y lo que devuelven, cada vez que se usan | Instalar muchos "por si acaso"                                         |
+| Skill         | Una receta en el cajón   | Saber hacer                  | Nombre y descripción; el resto si aplica (y se queda)             | Meter el procedimiento en `AGENTS.md`                                |
+| Subagente     | Otra persona con su mesa  | Una mesa aparte              | Tu encargo y su resultado                                          | Delegar sin dar contexto ni decir qué regresar                        |
+| `AGENTS.md` | La nota pegada en la mesa | Reglas que aplican siempre   | Todo, siempre                                                      | Hacerlo largo                                                          |
 
-> **Para quien presenta:** para cada pieza, pregunta "¿qué ocupa en la mesa?" antes
-> de mostrar la respuesta. Es la pregunta que conecta las cinco.
 
 ## ¿Dónde va cada cosa?
 

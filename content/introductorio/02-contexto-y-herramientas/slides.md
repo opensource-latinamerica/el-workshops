@@ -46,7 +46,7 @@ ESPACIO LIBRE  ← se acaba
 ## Tres consecuencias
 
 - **Se llena:** el harness *compacta* (resume) y pierde detalles
-- **Se degrada antes de llenarse:** con mucho encima, lo importante se pierde
+- **Se degrada antes de llenarse:** con mucho encima, lo importante se pierde (*context rot*)
 - **Se borra:** sesión nueva = mesa vacía, salvo lo de "siempre"
 
 ---
@@ -65,11 +65,73 @@ La respuesta del paso 1 es el archivo enorme: se **vuelve a pagar** en cada paso
 
 ---
 
-## Regla
+## El contexto no es gratis
 
-**Una tarea, una sesión.**
+Todo lo que entra a la mesa se paga dos veces:
 
-Mesa limpia, menos costo, menos confusión.
+- En **tokens**: se reenvía en cada paso
+- En **calidad**: compite por la atención del modelo
+
+---
+
+## Context rot
+
+Conforme la mesa se llena, el modelo **rinde peor**: sigue instrucciones con menos cuidado, mezcla lo viejo con lo nuevo, se le escapan detalles.
+
+- Empieza mucho antes de llenarse: se nota desde **~20–25 %** de la ventana
+- El número cambia según modelo y tarea; la idea no
+
+En Claude Code: `/context` muestra cuánto llevas.
+
+--
+
+## `/context`
+
+![Uso de contexto en Claude Code: 45.6k de 1.0M tokens](context-usage.png)
+
+Las categorías son las de la mesa. Más de la mitad es lo de "siempre".
+
+---
+
+## Las sesiones largas se comen tu plan
+
+- El mensaje 40 cuesta mucho más que el 4
+- Y trabaja con la mesa más degradada
+
+**Pagas más por un resultado peor.**
+
+--
+
+## `/usage`
+
+![Uso del plan Claude Pro: límite de 5 horas y semanal](plan-usage.png)
+
+Dos límites: cada 5 horas y semanal. *Session* = ventana de 5 horas, no una conversación.
+
+---
+
+## El tradeoff
+
+```text
+Poco contexto                 Demasiado contexto
+  no sabe lo que necesita       se pierde entre tanto
+  adivina o inventa             olvida instrucciones
+                                gasta tu plan más rápido
+
+              ↑ el punto óptimo:
+          lo justo para esta tarea
+```
+
+---
+
+## El criterio: tareas pequeñas
+
+**Parte el trabajo para que cada tarea quepa con holgura en una mesa limpia.**
+
+- **Una tarea, una sesión**
+- Si es grande, **divídela** en pasos que se revisan por separado
+- Lo que pasa a la siguiente sesión, **en un archivo**
+- Si empieza a olvidar: **resumen y sesión nueva**, no insistas
 
 ---
 
