@@ -1,6 +1,6 @@
 ---
 title: "2. Contexto y herramientas"
-weight: 2
+weight: 3
 outputs: [html, slides]
 ---
 
